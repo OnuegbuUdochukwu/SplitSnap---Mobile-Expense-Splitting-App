@@ -139,17 +139,15 @@ CREATE POLICY "Group creators can update their groups"
     USING (creator_id = auth.uid());
 
 -- RLS Policies for group_members table
-CREATE POLICY "Users can read group memberships for their groups"
+CREATE POLICY "Users can read their group memberships"
     ON group_members
     FOR SELECT
     TO authenticated
     USING (
-        user_id = auth.uid() OR
-        EXISTS (
-            SELECT 1 FROM groups 
-            WHERE groups.group_id = group_members.group_id 
-            AND groups.creator_id = auth.uid()
-        )
+        -- Only allow a user to read their own membership rows. We avoid referencing
+        -- the `groups` table here to prevent recursive RLS evaluation between
+        -- `groups` and `group_members` policies which can cause "infinite recursion".
+        user_id = auth.uid()
     );
 
 CREATE POLICY "Users can join groups"
