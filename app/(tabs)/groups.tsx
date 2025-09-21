@@ -35,28 +35,37 @@ export default function GroupsScreen() {
   const fetchGroups = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch groups where user is a member
       const { data: memberGroups, error: memberError } = await supabase
         .from('group_members')
-        .select(`
+        .select(
+          `
           groups!inner (
             group_id,
             name,
             creator_id,
             created_at
           )
-        `)
+        `
+        )
         .eq('user_id', user!.user_id);
 
       if (memberError) throw memberError;
 
       // Transform the data and add member count
-      const groupsData: GroupWithMembers[] = memberGroups?.map(item => ({
-        ...item.groups,
-        member_count: 0,
-        total_balance: 0,
-      })) || [];
+      // Supabase returns related rows as arrays for the `groups` join, so pick the first matched group row
+      const groupsData: GroupWithMembers[] =
+        memberGroups?.map((item: any) => {
+          const groupRow = Array.isArray(item.groups)
+            ? item.groups[0]
+            : item.groups;
+          return {
+            ...groupRow,
+            member_count: 0,
+            total_balance: 0,
+          } as GroupWithMembers;
+        }) || [];
 
       // Fetch member counts for each group
       for (const group of groupsData) {
@@ -64,7 +73,7 @@ export default function GroupsScreen() {
           .from('group_members')
           .select('*', { count: 'exact' })
           .eq('group_id', group.group_id);
-        
+
         group.member_count = count || 0;
       }
 
@@ -161,7 +170,7 @@ export default function GroupsScreen() {
         {/* Groups List */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Your Groups</Text>
-          
+
           {loading ? (
             <View style={styles.loadingContainer}>
               <Text style={styles.loadingText}>Loading groups...</Text>
@@ -173,7 +182,9 @@ export default function GroupsScreen() {
                   key={group.group_id}
                   style={styles.groupCard}
                   activeOpacity={0.8}
-                  onPress={() => Alert.alert('Group Details', `Open ${group.name} details`)}
+                  onPress={() =>
+                    Alert.alert('Group Details', `Open ${group.name} details`)
+                  }
                 >
                   <View style={styles.groupIcon}>
                     <Users size={20} color="#3B82F6" />
@@ -188,7 +199,9 @@ export default function GroupsScreen() {
                     </Text>
                   </View>
                   <View style={styles.groupBalance}>
-                    <Text style={styles.balanceAmount}>₦{group.total_balance}</Text>
+                    <Text style={styles.balanceAmount}>
+                      ₦{group.total_balance}
+                    </Text>
                     <Text style={styles.balanceLabel}>Balance</Text>
                   </View>
                 </TouchableOpacity>
