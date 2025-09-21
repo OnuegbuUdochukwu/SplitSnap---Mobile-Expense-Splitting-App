@@ -21,13 +21,13 @@ interface AuthScreenProps {
   error?: string | null;
 }
 
-export function AuthScreen({ 
-  onGoogleSignIn, 
-  onAppleSignIn, 
-  onEmailSignIn, 
+export function AuthScreen({
+  onGoogleSignIn,
+  onAppleSignIn,
+  onEmailSignIn,
   onEmailSignUp,
   loading = false,
-  error 
+  error,
 }: AuthScreenProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -39,7 +39,7 @@ export function AuthScreen({
     if (!email.trim() || !password.trim()) {
       return;
     }
-    
+
     if (isSignUp) {
       if (!fullName.trim()) return;
       onEmailSignUp(email.trim(), password, fullName.trim());
@@ -58,15 +58,12 @@ export function AuthScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#3B82F6', '#1D4ED8']}
-        style={styles.gradient}
-      >
-        <KeyboardAvoidingView 
+      <LinearGradient colors={['#3B82F6', '#1D4ED8']} style={styles.gradient}>
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoid}
         >
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
           >
@@ -84,21 +81,18 @@ export function AuthScreen({
               {!showEmailForm ? (
                 <>
                   <View style={styles.features}>
-                    <FeatureItem 
-                      icon="📸" 
-                      text="Scan receipts with AI-powered OCR" 
+                    <FeatureItem
+                      icon="📸"
+                      text="Scan receipts with AI-powered OCR"
                     />
-                    <FeatureItem 
-                      icon="⚡" 
-                      text="Real-time collaborative splitting" 
+                    <FeatureItem
+                      icon="⚡"
+                      text="Real-time collaborative splitting"
                     />
-                    <FeatureItem 
-                      icon="💳" 
-                      text="Secure in-app payments" 
-                    />
-                    <FeatureItem 
-                      icon="👥" 
-                      text="Track group expenses over time" 
+                    <FeatureItem icon="💳" text="Secure in-app payments" />
+                    <FeatureItem
+                      icon="👥"
+                      text="Track group expenses over time"
                     />
                   </View>
 
@@ -110,7 +104,9 @@ export function AuthScreen({
                       disabled={loading}
                     >
                       <Text style={styles.googleIcon}>🔐</Text>
-                      <Text style={styles.googleText}>Continue with Google</Text>
+                      <Text style={styles.googleText}>
+                        Continue with Google
+                      </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -135,11 +131,14 @@ export function AuthScreen({
                       activeOpacity={0.8}
                       disabled={loading}
                     >
-                      <Text style={styles.emailButtonText}>Continue with Email</Text>
+                      <Text style={styles.emailButtonText}>
+                        Continue with Email
+                      </Text>
                     </TouchableOpacity>
-                    
+
                     <Text style={styles.disclaimer}>
-                      By continuing, you agree to our Terms of Service and Privacy Policy
+                      By continuing, you agree to our Terms of Service and
+                      Privacy Policy
                     </Text>
                   </View>
                 </>
@@ -175,7 +174,7 @@ export function AuthScreen({
                         autoComplete="name"
                       />
                     )}
-                    
+
                     <TextInput
                       style={styles.input}
                       placeholder="Email"
@@ -186,7 +185,7 @@ export function AuthScreen({
                       autoCapitalize="none"
                       autoComplete="email"
                     />
-                    
+
                     <TextInput
                       style={styles.input}
                       placeholder="Password"
@@ -194,18 +193,32 @@ export function AuthScreen({
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
-                      autoComplete={isSignUp ? "new-password" : "current-password"}
+                      autoComplete={
+                        isSignUp ? 'new-password' : 'current-password'
+                      }
                     />
                   </View>
 
                   <TouchableOpacity
-                    style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+                    style={[
+                      styles.submitButton,
+                      loading && styles.submitButtonDisabled,
+                    ]}
                     onPress={handleEmailAuth}
-                    disabled={loading || !email.trim() || !password.trim() || (isSignUp && !fullName.trim())}
+                    disabled={
+                      loading ||
+                      !email.trim() ||
+                      !password.trim() ||
+                      (isSignUp && !fullName.trim())
+                    }
                     activeOpacity={0.8}
                   >
                     <Text style={styles.submitButtonText}>
-                      {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
+                      {loading
+                        ? 'Please wait...'
+                        : isSignUp
+                        ? 'Create Account'
+                        : 'Sign In'}
                     </Text>
                   </TouchableOpacity>
 
@@ -215,10 +228,9 @@ export function AuthScreen({
                     disabled={loading}
                   >
                     <Text style={styles.switchModeText}>
-                      {isSignUp 
-                        ? 'Already have an account? Sign In' 
-                        : "Don't have an account? Sign Up"
-                      }
+                      {isSignUp
+                        ? 'Already have an account? Sign In'
+                        : "Don't have an account? Sign Up"}
                     </Text>
                   </TouchableOpacity>
                 </View>
