@@ -183,7 +183,11 @@ export default function GroupsScreen() {
                   style={styles.groupCard}
                   activeOpacity={0.8}
                   onPress={() =>
-                    Alert.alert('Group Details', `Open ${group.name} details`)
+                    Alert.alert(
+                      'Group Details', 
+                      `Group management features will be implemented in Phase 2. You'll be able to view bills, add members, and manage expenses for ${group.name}.`,
+                      [{ text: 'Got it!' }]
+                    )
                   }
                 >
                   <View style={styles.groupIcon}>

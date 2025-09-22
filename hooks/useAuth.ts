@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import * as Linking from 'expo-linking';
+import { Alert } from 'react-native';
 import { supabase } from '@/lib/supabase';
 
 interface AuthState {
@@ -38,13 +39,24 @@ export function useAuth(): AuthState {
         .eq('user_id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // If profile doesn't exist, it might still be creating via trigger
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found, may still be creating...');
+          return null;
+        }
+        throw error;
+      }
+      
       profileCache = data as AuthState['user'];
       setUser(data as AuthState['user']);
       return data as AuthState['user'];
     } catch (err: any) {
       console.warn('Failed to fetch profile', err);
-      setError(err?.message || String(err));
+      // Don't set error for profile fetch failures during auth flow
+      if (!err?.message?.includes('not found')) {
+        setError(err?.message || String(err));
+      }
       return null;
     }
   }, []);
@@ -78,7 +90,23 @@ export function useAuth(): AuthState {
         setError(null);
 
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          // Retry profile fetch with delay for new users
+          let retries = 3;
+          let profile = null;
+          
+          while (retries > 0 && !profile) {
+            profile = await fetchProfile(session.user.id);
+            if (!profile) {
+              retries--;
+              if (retries > 0) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+              }
+            }
+          }
+          
+          if (!profile) {
+            console.warn('Profile creation may have failed');
+          }
         } else {
           profileCache = null;
           setUser(null);
@@ -105,7 +133,9 @@ export function useAuth(): AuthState {
       });
       if (error) throw error;
     } catch (err: any) {
-      setError(err?.message || String(err));
+      const errorMessage = err?.message || String(err);
+      setError(errorMessage);
+      Alert.alert('Sign In Error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -122,7 +152,9 @@ export function useAuth(): AuthState {
       });
       if (error) throw error;
     } catch (err: any) {
-      setError(err?.message || String(err));
+      const errorMessage = err?.message || String(err);
+      setError(errorMessage);
+      Alert.alert('Sign In Error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -160,10 +192,13 @@ export function useAuth(): AuthState {
         });
         if (error) throw error;
 
-        // If Supabase created the user and session, fetch profile
+        // If Supabase created the user, wait for profile creation
         const userId = data?.user?.id;
         if (userId) {
-          await fetchProfile(userId);
+          // Give the database trigger time to create the profile
+          setTimeout(async () => {
+            await fetchProfile(userId);
+          }, 1500);
         }
       } catch (err: any) {
         setError(err?.message || String(err));
