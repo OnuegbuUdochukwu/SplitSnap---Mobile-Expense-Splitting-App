@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "build:web": "expo export --platform web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "e2e-auth": "node scripts/e2e-auth-test.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
