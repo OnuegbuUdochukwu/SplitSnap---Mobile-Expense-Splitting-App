@@ -222,6 +222,12 @@ export function AuthScreen({
                     </Text>
                   </TouchableOpacity>
 
+                  {isSignUp && (
+                    <Text style={styles.signUpNote}>
+                      After creating your account, you may need to wait a moment for your profile to be set up.
+                    </Text>
+                  )}
+
                   <TouchableOpacity
                     style={styles.switchModeButton}
                     onPress={() => setIsSignUp(!isSignUp)}
@@ -464,5 +470,12 @@ const styles = StyleSheet.create({
   switchModeText: {
     color: 'rgba(255,255,255,0.8)',
     fontSize: 14,
+  },
+  signUpNote: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 16,
   },
 });

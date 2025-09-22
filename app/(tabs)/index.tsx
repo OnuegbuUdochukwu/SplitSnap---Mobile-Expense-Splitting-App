@@ -48,19 +48,18 @@ export default function HomeScreen() {
   };
 
   const handleScanReceipt = () => {
-    // For now, show an alert. This will be replaced with camera integration
     Alert.alert(
       'Scan Receipt',
-      'Camera integration will be implemented next. This will use AI-powered OCR to digitize your receipt.',
-      [{ text: 'OK' }]
+      'Camera integration will be implemented in Phase 2. This will use AI-powered OCR to digitize your receipt.',
+      [{ text: 'Got it!' }]
     );
   };
 
   const handleQuickSplit = () => {
     Alert.alert(
       'Quick Split',
-      'Create a manual split without scanning a receipt.',
-      [{ text: 'OK' }]
+      'Manual bill creation will be implemented in Phase 2. You\'ll be able to create splits without scanning.',
+      [{ text: 'Got it!' }]
     );
   };
 
