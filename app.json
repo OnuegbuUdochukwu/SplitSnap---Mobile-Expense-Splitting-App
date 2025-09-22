@@ -25,25 +25,41 @@
       [
         "expo-build-properties",
         {
-          "ios": { "newArchEnabled": true },
-          "android": { "newArchEnabled": true }
+          "ios": {
+            "newArchEnabled": true
+          },
+          "android": {
+            "newArchEnabled": true
+          }
         }
       ]
     ],
-    "experiments": { "typedRoutes": true },
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
-      "eas": { "projectId": "your-eas-project-id" },
       "supabase": {
         "url": "__REPLACE_WITH_EXPO_PUBLIC_SUPABASE_URL__",
         "anonKey": "__REPLACE_WITH_EXPO_PUBLIC_SUPABASE_ANON_KEY__"
       },
-      "oauth": { "scheme": "myapp", "redirectPath": "auth/callback" }
+      "oauth": {
+        "scheme": "myapp",
+        "redirectPath": "auth/callback"
+      },
+      "router": {},
+      "eas": {
+        "projectId": "fd21be3f-65e3-4c08-94b9-3abcadc9ca95"
+      }
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.splitsnap.app",
       "infoPlist": {
-        "CFBundleURLTypes": [{ "CFBundleURLSchemes": ["myapp"] }]
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["myapp"]
+          }
+        ]
       }
     },
     "android": {
@@ -56,11 +72,16 @@
         {
           "action": "VIEW",
           "data": [
-            { "scheme": "myapp", "host": "auth", "pathPrefix": "/callback" }
+            {
+              "scheme": "myapp",
+              "host": "auth",
+              "pathPrefix": "/callback"
+            }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
-    }
+    },
+    "owner": "onuegbuudo"
   }
 }

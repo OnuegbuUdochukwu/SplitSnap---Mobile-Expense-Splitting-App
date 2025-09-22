@@ -8,7 +8,9 @@
     "build:web": "expo export --platform web",
     "lint": "expo lint",
     "e2e-auth": "node scripts/e2e-auth-test.js",
-    "cleanup-e2e": "node scripts/cleanup-e2e-users.js"
+    "cleanup-e2e": "node scripts/cleanup-e2e-users.js",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -22,6 +24,7 @@
     "expo-build-properties": "~0.14.8",
     "expo-camera": "~16.1.11",
     "expo-constants": "~17.1.7",
+    "expo-dev-client": "~5.2.4",
     "expo-font": "~13.3.2",
     "expo-haptics": "~14.1.4",
     "expo-linear-gradient": "~14.1.5",
@@ -44,11 +47,13 @@
     "react-native-svg": "15.11.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "eas-cli": "^16.19.3",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~9.2.0",
     "minimist": "^1.2.8",
