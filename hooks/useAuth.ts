@@ -47,7 +47,7 @@ export function useAuth(): AuthState {
         }
         throw error;
       }
-      
+
       profileCache = data as AuthState['user'];
       setUser(data as AuthState['user']);
       return data as AuthState['user'];
@@ -68,6 +68,7 @@ export function useAuth(): AuthState {
       setLoading(true);
       try {
         const { data: sessionData } = await supabase.auth.getSession();
+        console.log('[useAuth] init supabase session:', sessionData);
         const sessionUser = sessionData?.session?.user;
 
         if (sessionUser && mounted) {
@@ -85,6 +86,7 @@ export function useAuth(): AuthState {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[useAuth] onAuthStateChange', event, session);
         // event: 'SIGNED_IN' | 'SIGNED_OUT' | etc.
         setLoading(true);
         setError(null);
@@ -93,17 +95,17 @@ export function useAuth(): AuthState {
           // Retry profile fetch with delay for new users
           let retries = 3;
           let profile = null;
-          
+
           while (retries > 0 && !profile) {
             profile = await fetchProfile(session.user.id);
             if (!profile) {
               retries--;
               if (retries > 0) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise((resolve) => setTimeout(resolve, 1000));
               }
             }
           }
-          
+
           if (!profile) {
             console.warn('Profile creation may have failed');
           }
@@ -127,6 +129,7 @@ export function useAuth(): AuthState {
       setLoading(true);
       setError(null);
       const redirectTo = Linking.createURL('auth/callback');
+      console.log('[useAuth] signInWithGoogle redirectTo=', redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo },
@@ -146,6 +149,7 @@ export function useAuth(): AuthState {
       setLoading(true);
       setError(null);
       const redirectTo = Linking.createURL('auth/callback');
+      console.log('[useAuth] signInWithApple redirectTo=', redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: { redirectTo },
