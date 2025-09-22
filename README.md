@@ -224,6 +224,58 @@ npm run e2e-auth
 
 The script will create a temporary test user (email) and attempt to sign up/sign in and verify a `users` profile row exists. Review the script output and check the `users` table in Supabase to confirm.
 
+#### Cleaning up E2E test users (optional)
+
+If you run the e2e script against a shared or staging database you may want to remove the temporary test users it creates. A helper script is included to safely delete any test users that follow the `e2e_test_` email prefix.
+
+1. Create or update your `.env` with a service role key (keep this secret):
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=your-supabase-project-url
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+```
+
+2. Dry run (no destructive action):
+
+```bash
+node scripts/cleanup-e2e-users.js --dry-run
+```
+
+3. To actually delete found test users (confirm):
+
+```bash
+node scripts/cleanup-e2e-users.js --confirm
+```
+
+The script will list the users found and ask for `--confirm` to perform deletion. It uses the Supabase Admin API (service role key required) to delete both the Auth user and any associated `users` profile rows.
+
+#### Dev-client & OAuth testing on device
+
+To test Google OAuth on a real device using Expo Dev Client (recommended for native OAuth flows):
+
+1. Add the following redirect URI to your Google OAuth client configuration in Google Cloud Console (and to Supabase Auth settings):
+
+```
+myapp://auth/callback
+```
+
+2. Build an Expo Dev Client (one-time):
+
+```bash
+# Install EAS CLI if you don't have it
+npm install -g eas-cli
+
+# Build a dev client for your platform (iOS or Android)
+eas build --profile development --platform all
+```
+
+3. Install the dev client on your device (via TestFlight/adb or direct install) and run the app. Trigger Google sign-in in the app; Supabase should redirect back to `myapp://auth/callback` and the app will receive the auth session.
+
+Notes:
+
+- For web testing you can add `http://localhost:19006/_expo/web-auth` as a redirect (Expo web auth path), but native OAuth flows require a scheme and dev-client or standalone build.
+- Apple Sign-In requires additional entitlements and bundle IDs; skip until you have an App Store Connect setup.
+
 Security note: The e2e script may create test users; consider running it against a staging Supabase project or periodically cleaning test data.
 
 ### Phase 2: Receipt Scanning (In Progress)

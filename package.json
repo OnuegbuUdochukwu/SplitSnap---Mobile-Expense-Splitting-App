@@ -7,7 +7,8 @@
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "build:web": "expo export --platform web",
     "lint": "expo lint",
-    "e2e-auth": "node scripts/e2e-auth-test.js"
+    "e2e-auth": "node scripts/e2e-auth-test.js",
+    "cleanup-e2e": "node scripts/cleanup-e2e-users.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -48,6 +49,9 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~9.2.0",
+    "minimist": "^1.2.8",
     "typescript": "~5.8.3"
   }
 }
