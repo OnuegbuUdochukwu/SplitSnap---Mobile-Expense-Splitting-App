@@ -3,9 +3,32 @@ import '@/lib/polyfills/webcrypto';
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { checkSubtleDigest } from './debug/cryptoCheck';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+
+// Debug: log whether WebCrypto is available in the JS runtime
+try {
+  console.debug(
+    '[lib/supabase] global.crypto present=',
+    typeof (global as any).crypto !== 'undefined'
+  );
+  console.debug(
+    '[lib/supabase] crypto.subtle.digest present=',
+    typeof (global as any).crypto?.subtle?.digest === 'function'
+  );
+} catch {
+  // ignore
+}
+
+// Run an explicit subtle.digest check so runtime logs will show availability
+// Fire-and-forget; non-blocking startup
+try {
+  void checkSubtleDigest();
+} catch (err) {
+  console.debug('[lib/supabase] checkSubtleDigest threw:', err);
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
