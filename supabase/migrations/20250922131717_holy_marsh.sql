@@ -121,12 +121,10 @@ CREATE POLICY "Users can read group memberships for their groups"
   FOR SELECT
   TO authenticated
   USING (
-    user_id = auth.uid() OR
-    EXISTS (
-      SELECT 1 FROM groups
-      WHERE groups.group_id = group_members.group_id
-      AND groups.creator_id = auth.uid()
-    )
+    -- Only allow users to read their own membership rows. Avoid referencing
+    -- the `groups` table here to prevent recursive RLS evaluation between
+    -- `groups` and `group_members` policies which can cause "infinite recursion".
+    user_id = auth.uid()
   );
 
 -- Bills table
