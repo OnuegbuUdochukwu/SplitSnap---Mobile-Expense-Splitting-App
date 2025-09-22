@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import * as Linking from 'expo-linking';
 import { supabase } from '@/lib/supabase';
 
 interface AuthState {
@@ -97,8 +98,10 @@ export function useAuth(): AuthState {
     try {
       setLoading(true);
       setError(null);
+      const redirectTo = Linking.createURL('auth/callback');
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: { redirectTo },
       });
       if (error) throw error;
     } catch (err: any) {
@@ -112,8 +115,10 @@ export function useAuth(): AuthState {
     try {
       setLoading(true);
       setError(null);
+      const redirectTo = Linking.createURL('auth/callback');
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
+        options: { redirectTo },
       });
       if (error) throw error;
     } catch (err: any) {
