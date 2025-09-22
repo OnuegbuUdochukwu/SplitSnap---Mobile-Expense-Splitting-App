@@ -130,11 +130,12 @@ export function useAuth(): AuthState {
       setError(null);
       const redirectTo = Linking.createURL('auth/callback');
       console.log('[useAuth] signInWithGoogle redirectTo=', redirectTo);
-      const { error } = await supabase.auth.signInWithOAuth({
+      const result = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo },
       });
-      if (error) throw error;
+      console.debug('[useAuth] signInWithGoogle result=', result);
+      if (result.error) throw result.error;
     } catch (err: any) {
       const errorMessage = err?.message || String(err);
       setError(errorMessage);
@@ -150,11 +151,12 @@ export function useAuth(): AuthState {
       setError(null);
       const redirectTo = Linking.createURL('auth/callback');
       console.log('[useAuth] signInWithApple redirectTo=', redirectTo);
-      const { error } = await supabase.auth.signInWithOAuth({
+      const result = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: { redirectTo },
       });
-      if (error) throw error;
+      console.debug('[useAuth] signInWithApple result=', result);
+      if (result.error) throw result.error;
     } catch (err: any) {
       const errorMessage = err?.message || String(err);
       setError(errorMessage);

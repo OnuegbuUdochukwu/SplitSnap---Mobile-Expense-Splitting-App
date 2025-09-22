@@ -13,9 +13,24 @@ export default function RootLayout() {
     // Handle OAuth deep linking
     const handleDeepLink = async (url: string) => {
       if (url.includes('auth/callback')) {
-        const { data, error } = await supabase.auth.getSessionFromUrl({ url });
-        if (error) {
-          console.error('OAuth callback error:', error);
+        console.debug('[app/_layout] handling deep link URL=', url);
+        // Using dynamic access to avoid TS mismatch between supabase client versions
+        const fn = (supabase.auth as any).getSessionFromUrl;
+        if (typeof fn === 'function') {
+          const { data, error } = await fn.call(supabase.auth, { url });
+          console.debug('[app/_layout] getSessionFromUrl result', {
+            data,
+            error,
+          });
+          if (error) {
+            console.error('[app/_layout] OAuth callback error:', error);
+          } else {
+            console.debug('[app/_layout] OAuth callback parsed session=', data);
+          }
+        } else {
+          console.warn(
+            '[app/_layout] supabase.auth.getSessionFromUrl not available on this client'
+          );
         }
       }
     };
