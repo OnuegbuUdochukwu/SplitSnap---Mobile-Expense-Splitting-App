@@ -31,5 +31,8 @@ yarn-error.*
 .env*.local
 .env
 
+# ignore local dev APKs
+splitsnap-dev.apk
+
 # typescript
 *.tsbuildinfo
