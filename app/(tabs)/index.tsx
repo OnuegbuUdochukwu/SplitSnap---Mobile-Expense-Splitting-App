@@ -10,19 +10,21 @@ import {
 } from 'react-native';
 import { Camera, Scan, Plus, Receipt } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'expo-router';
 import { AuthScreen } from '@/components/AuthScreen';
 import { supabase, Bill } from '@/lib/supabase';
 
 export default function HomeScreen() {
-  const { 
-    user, 
-    loading, 
+  const {
+    user,
+    loading,
     error,
-    signInWithGoogle, 
+    signInWithGoogle,
     signInWithApple,
     signInWithEmail,
-    signUpWithEmail 
+    signUpWithEmail,
   } = useAuth();
+  const router = useRouter();
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
 
   useEffect(() => {
@@ -48,19 +50,25 @@ export default function HomeScreen() {
   };
 
   const handleScanReceipt = () => {
-    Alert.alert(
-      'Scan Receipt',
-      'Camera integration will be implemented in Phase 2. This will use AI-powered OCR to digitize your receipt.',
-      [{ text: 'Got it!' }]
-    );
+    // Navigate to the Scan screen implemented in Phase 2
+    try {
+      // cast to any to avoid strict router path typing in the editor environment
+      router.push('/scan' as any);
+    } catch {
+      // Fallback for environments where router is not available
+      Alert.alert('Open Scanner', 'Scanner is available in the running app.');
+    }
   };
 
   const handleQuickSplit = () => {
-    Alert.alert(
-      'Quick Split',
-      'Manual bill creation will be implemented in Phase 2. You\'ll be able to create splits without scanning.',
-      [{ text: 'Got it!' }]
-    );
+    try {
+      router.push('/manual' as any);
+    } catch {
+      Alert.alert(
+        'Quick Split',
+        'Manual bill creation will be implemented in Phase 2.'
+      );
+    }
   };
 
   if (loading) {
@@ -73,7 +81,7 @@ export default function HomeScreen() {
 
   if (!user) {
     return (
-      <AuthScreen 
+      <AuthScreen
         onGoogleSignIn={signInWithGoogle}
         onAppleSignIn={signInWithApple}
         onEmailSignIn={signInWithEmail}
@@ -148,9 +156,7 @@ export default function HomeScreen() {
                     <Text style={styles.billAmount}>
                       ₦{bill.total_amount.toLocaleString()}
                     </Text>
-                    <Text style={styles.billStatus}>
-                      Status: {bill.status}
-                    </Text>
+                    <Text style={styles.billStatus}>Status: {bill.status}</Text>
                     <Text style={styles.billDate}>
                       {new Date(bill.created_at!).toLocaleDateString()}
                     </Text>
