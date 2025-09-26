@@ -45,12 +45,14 @@ CREATE TABLE IF NOT EXISTS users (
 -- Enable RLS and create policies for users
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own profile" ON users;
 CREATE POLICY "Users can read own profile"
   ON users
   FOR SELECT
   TO authenticated
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON users;
 CREATE POLICY "Users can update own profile"
   ON users
   FOR UPDATE
@@ -58,6 +60,7 @@ CREATE POLICY "Users can update own profile"
   USING (auth.uid() = user_id);
 
 -- Add updated_at trigger for users
+DROP TRIGGER IF EXISTS handle_users_updated_at ON users;
 CREATE TRIGGER handle_users_updated_at
   BEFORE UPDATE ON users
   FOR EACH ROW
@@ -74,12 +77,15 @@ CREATE TABLE IF NOT EXISTS groups (
 -- Enable RLS and create policies for groups
 ALTER TABLE groups ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can create groups" ON groups;
 CREATE POLICY "Users can create groups"
   ON groups
   FOR INSERT
   TO authenticated
   WITH CHECK (creator_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can read groups they belong to" ON groups;
 CREATE POLICY "Users can read groups they belong to"
   ON groups
   FOR SELECT
@@ -93,6 +99,7 @@ CREATE POLICY "Users can read groups they belong to"
     )
   );
 
+DROP POLICY IF EXISTS "Group creators can update their groups" ON groups;
 CREATE POLICY "Group creators can update their groups"
   ON groups
   FOR UPDATE
@@ -110,12 +117,15 @@ CREATE TABLE IF NOT EXISTS group_members (
 -- Enable RLS and create policies for group_members
 ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can join groups" ON group_members;
 CREATE POLICY "Users can join groups"
   ON group_members
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can read group memberships for their groups" ON group_members;
 CREATE POLICY "Users can read group memberships for their groups"
   ON group_members
   FOR SELECT
@@ -142,12 +152,15 @@ CREATE TABLE IF NOT EXISTS bills (
 -- Enable RLS and create policies for bills
 ALTER TABLE bills ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can create bills" ON bills;
 CREATE POLICY "Users can create bills"
   ON bills
   FOR INSERT
   TO authenticated
   WITH CHECK (creator_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can read bills they created or are involved in" ON bills;
 CREATE POLICY "Users can read bills they created or are involved in"
   ON bills
   FOR SELECT
@@ -161,6 +174,7 @@ CREATE POLICY "Users can read bills they created or are involved in"
     ))
   );
 
+DROP POLICY IF EXISTS "Bill creators can update their bills" ON bills;
 CREATE POLICY "Bill creators can update their bills"
   ON bills
   FOR UPDATE
@@ -168,6 +182,7 @@ CREATE POLICY "Bill creators can update their bills"
   USING (creator_id = auth.uid());
 
 -- Add updated_at trigger for bills
+DROP TRIGGER IF EXISTS handle_bills_updated_at ON bills;
 CREATE TRIGGER handle_bills_updated_at
   BEFORE UPDATE ON bills
   FOR EACH ROW
@@ -186,6 +201,8 @@ CREATE TABLE IF NOT EXISTS bill_items (
 -- Enable RLS and create policies for bill_items
 ALTER TABLE bill_items ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can read items from accessible bills" ON bill_items;
 CREATE POLICY "Users can read items from accessible bills"
   ON bill_items
   FOR SELECT
@@ -218,12 +235,15 @@ CREATE TABLE IF NOT EXISTS item_assignments (
 -- Enable RLS and create policies for item_assignments
 ALTER TABLE item_assignments ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can create their own assignments" ON item_assignments;
 CREATE POLICY "Users can create their own assignments"
   ON item_assignments
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can read assignments for accessible bills" ON item_assignments;
 CREATE POLICY "Users can read assignments for accessible bills"
   ON item_assignments
   FOR SELECT
@@ -244,12 +264,14 @@ CREATE POLICY "Users can read assignments for accessible bills"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update their own assignments" ON item_assignments;
 CREATE POLICY "Users can update their own assignments"
   ON item_assignments
   FOR UPDATE
   TO authenticated
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete their own assignments" ON item_assignments;
 CREATE POLICY "Users can delete their own assignments"
   ON item_assignments
   FOR DELETE
@@ -271,6 +293,8 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
 -- Enable RLS and create policies for ledger_entries
 ALTER TABLE ledger_entries ENABLE ROW LEVEL SECURITY;
 
+
+DROP POLICY IF EXISTS "Users can read ledger entries for their groups" ON ledger_entries;
 CREATE POLICY "Users can read ledger entries for their groups"
   ON ledger_entries
   FOR SELECT
