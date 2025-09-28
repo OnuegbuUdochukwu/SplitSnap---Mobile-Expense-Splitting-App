@@ -1,32 +1,62 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import { Chrome as Home, Users, Activity, User } from 'lucide-react-native';
 
 export default function TabLayout() {
+  const { width } = Dimensions.get('window');
+  const INACTIVE_COLOR = '#5F6368'; 
+  
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#3B82F6',
-        tabBarInactiveTintColor: '#64748B',
+        tabBarShowLabel: true, 
+
+        tabBarActiveTintColor: '#1976D2', // Active Blue Color
+        tabBarInactiveTintColor: INACTIVE_COLOR,
+        
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#E2E8F0',
-          paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-          height: Platform.OS === 'ios' ? 80 : 60,
+          borderTopWidth: 0,
+          shadowOpacity: 0,
+          elevation: 0,
+          height: Platform.OS === 'ios' ? 80 : 64, 
+          flexDirection: 'row',
+          // CRITICAL: Remove all horizontal padding from the bar container
+          paddingHorizontal: 0,
+          marginHorizontal: 0, 
         },
+        
+        tabBarItemStyle: {
+          // CRITICAL: Force item to consume all available width
+          flex: 1, 
+          alignItems: 'center',
+          justifyContent: 'center',
+          
+          // CRITICAL: Remove default horizontal padding/margin on the item itself
+          paddingHorizontal: 0,
+          marginHorizontal: 0, 
+          paddingVertical: 0, // Ensure vertical padding doesn't affect width
+        },
+
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: '500',
+          textAlign: 'center',
+          color: INACTIVE_COLOR,
         },
-      }}>
+
+        tabBarIconStyle: {
+          marginBottom: -4,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Home size={width >= 420 ? 30 : 28} color={color} />
           ),
         }}
       />
@@ -34,8 +64,8 @@ export default function TabLayout() {
         name="groups"
         options={{
           title: 'Groups',
-          tabBarIcon: ({ size, color }) => (
-            <Users size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Users size={width >= 420 ? 28 : 26} color={color} />
           ),
         }}
       />
@@ -43,8 +73,8 @@ export default function TabLayout() {
         name="activity"
         options={{
           title: 'Activity',
-          tabBarIcon: ({ size, color }) => (
-            <Activity size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Activity size={width >= 420 ? 28 : 26} color={color} />
           ),
         }}
       />
@@ -52,9 +82,22 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <User size={width >= 420 ? 28 : 26} color={color} />
           ),
+        }}
+      />
+      {/* Hidden Screens */}
+      <Tabs.Screen
+        name="scan"
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="manual"
+        options={{
+          tabBarButton: () => null,
         }}
       />
     </Tabs>

@@ -53,3 +53,15 @@ export async function uploadReceiptImage(fileUri: string) {
     return { error: err };
   }
 }
+
+export async function deleteReceiptImage(path: string) {
+  try {
+    const { data, error } = await supabase.storage
+      .from(RECEIPTS_BUCKET)
+      .remove([path]);
+    if (error) return { error };
+    return { data };
+  } catch (err) {
+    return { error: err };
+  }
+}

@@ -27,13 +27,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
 
-  useEffect(() => {
-    if (user) {
-      fetchRecentBills();
-    }
-  }, [user]);
-
-  const fetchRecentBills = async () => {
+  const fetchRecentBills = React.useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('bills')
@@ -47,7 +41,13 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Error fetching recent bills:', error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchRecentBills();
+    }
+  }, [user, fetchRecentBills]);
 
   const handleScanReceipt = () => {
     // Navigate to the Scan screen implemented in Phase 2
@@ -108,38 +108,45 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Main Actions */}
+        {/* Main Actions - keep navigation tabs; move secondary actions into the primary card */}
         <View style={styles.mainActions}>
           <TouchableOpacity
             style={styles.primaryAction}
             onPress={handleScanReceipt}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
           >
             <Camera size={32} color="#FFFFFF" />
             <Text style={styles.primaryActionText}>Scan Receipt</Text>
             <Text style={styles.primaryActionSubtext}>
               Use AI to digitize your bill
             </Text>
+
+            <View style={styles.inlineActionsRow}>
+              <TouchableOpacity
+                style={styles.inlineAction}
+                onPress={handleQuickSplit}
+                activeOpacity={0.8}
+              >
+                <Plus size={18} color="#3B82F6" />
+                <Text style={styles.inlineActionText}>Quick Split</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.inlineAction}
+                onPress={() => {
+                  try {
+                    router.push('/manual' as any);
+                  } catch {
+                    Alert.alert('Join Split', 'Feature available in-app.');
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <Scan size={18} color="#3B82F6" />
+                <Text style={styles.inlineActionText}>Join Split</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
-
-          <View style={styles.secondaryActions}>
-            <TouchableOpacity
-              style={styles.secondaryAction}
-              onPress={handleQuickSplit}
-              activeOpacity={0.8}
-            >
-              <Plus size={24} color="#3B82F6" />
-              <Text style={styles.secondaryActionText}>Quick Split</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.secondaryAction}
-              activeOpacity={0.8}
-            >
-              <Scan size={24} color="#3B82F6" />
-              <Text style={styles.secondaryActionText}>Join Split</Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Recent Activity */}
@@ -377,5 +384,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#B45309',
     lineHeight: 18,
+  },
+  inlineActionsRow: {
+    flexDirection: 'row',
+    marginTop: 12,
+    gap: 12,
+  },
+  inlineAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    marginRight: 8,
+  },
+  inlineActionText: {
+    color: '#374151',
+    marginLeft: 8,
+    fontWeight: '600',
   },
 });

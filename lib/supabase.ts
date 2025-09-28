@@ -34,7 +34,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,
-    persistSession: true,
+    // During development, avoid persisting session to make testing login flows simpler.
+    // In production builds this will be true by default.
+    persistSession: typeof __DEV__ !== 'undefined' && __DEV__ ? false : true,
     detectSessionInUrl: false,
     flowType: 'pkce',
   },

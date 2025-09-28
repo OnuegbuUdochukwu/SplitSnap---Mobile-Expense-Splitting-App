@@ -67,6 +67,18 @@ export function useAuth(): AuthState {
     const init = async () => {
       setLoading(true);
       try {
+        // During development, forcibly clear any existing session so the login screen shows
+        // This makes it easier to test auth flows in the simulator/dev client.
+        // Only runs in dev to avoid affecting production.
+        // @ts-ignore
+        if (typeof __DEV__ !== 'undefined' && __DEV__) {
+          try {
+            await supabase.auth.signOut();
+            console.debug('[useAuth] forced signOut in __DEV__');
+          } catch (e) {
+            console.debug('[useAuth] forced signOut failed', e);
+          }
+        }
         const { data: sessionData } = await supabase.auth.getSession();
         console.log('[useAuth] init supabase session:', sessionData);
         const sessionUser = sessionData?.session?.user;
