@@ -27,9 +27,9 @@ type Props = {
 
 // --- PRECISE COLOR CORRECTION ---
 // Blue color from the image (Google Blue is close to this)
-const ACTIVE_COLOR = '#1976D2'; 
+const ACTIVE_COLOR = '#1976D2';
 // A light, neutral grey matching the inactive text/icon color in the image
-const INACTIVE_COLOR = '#5F6368'; 
+const INACTIVE_COLOR = '#5F6368';
 
 export default function BottomNav({
   initialTab = 'home',
@@ -152,6 +152,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 20,
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
     // Add a light shadow to match the typical bottom bar look, if desired
     // shadowColor: '#000',
     // shadowOpacity: 0.05,
@@ -166,18 +168,24 @@ const styles = StyleSheet.create({
     elevation: 0,
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
   },
   tab: {
     flex: 1, // Ensures equal width distribution across all 4 tabs (as requested)
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '25%',
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
     // Padding adjusted to balance the icon/text centering within the bar height
-    paddingVertical: Platform.OS === 'ios' ? 8 : 6, 
+    paddingVertical: Platform.OS === 'ios' ? 8 : 6,
   },
   label: {
     // Vertical spacing corrected to be tighter, matching the image
-    marginTop: 2, 
+    marginTop: 2,
     fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
