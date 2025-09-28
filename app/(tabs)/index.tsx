@@ -8,22 +8,24 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Camera, Scan, Plus, Receipt } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthScreen } from '@/components/AuthScreen';
 import { supabase, Bill } from '@/lib/supabase';
 
 export default function HomeScreen() {
-  const { 
-    user, 
-    loading, 
+  const {
+    user,
+    loading,
     error,
-    signInWithGoogle, 
+    signInWithGoogle,
     signInWithApple,
     signInWithEmail,
-    signUpWithEmail 
+    signUpWithEmail,
   } = useAuth();
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
+  const router = useRouter();
 
   const fetchRecentBills = React.useCallback(async () => {
     try {
@@ -58,7 +60,7 @@ export default function HomeScreen() {
   const handleQuickSplit = () => {
     Alert.alert(
       'Quick Split',
-      'Manual bill creation will be implemented in Phase 2. You\'ll be able to create splits without scanning.',
+      "Manual bill creation will be implemented in Phase 2. You'll be able to create splits without scanning.",
       [{ text: 'Got it!' }]
     );
   };
@@ -73,7 +75,7 @@ export default function HomeScreen() {
 
   if (!user) {
     return (
-      <AuthScreen 
+      <AuthScreen
         onGoogleSignIn={signInWithGoogle}
         onAppleSignIn={signInWithApple}
         onEmailSignIn={signInWithEmail}
@@ -155,9 +157,7 @@ export default function HomeScreen() {
                     <Text style={styles.billAmount}>
                       ₦{bill.total_amount.toLocaleString()}
                     </Text>
-                    <Text style={styles.billStatus}>
-                      Status: {bill.status}
-                    </Text>
+                    <Text style={styles.billStatus}>Status: {bill.status}</Text>
                     <Text style={styles.billDate}>
                       {new Date(bill.created_at!).toLocaleDateString()}
                     </Text>
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     color: '#B45309',
     lineHeight: 18,
   },
-<<<<<<< HEAD
+
   inlineActionsRow: {
     flexDirection: 'row',
     marginTop: 12,
@@ -400,6 +400,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-=======
-});
->>>>>>> parent of 277528f (feat(phase2): receipts private bucket + signed URLs; add storage helper, camera/manual screens, and test scripts)

@@ -58,7 +58,7 @@ async function main() {
   // Clean up: attempt to sign out
   try {
     await supabase.auth.signOut();
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
 }

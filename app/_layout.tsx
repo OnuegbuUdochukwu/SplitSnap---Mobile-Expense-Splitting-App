@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { supabase } from '@/lib/supabase';

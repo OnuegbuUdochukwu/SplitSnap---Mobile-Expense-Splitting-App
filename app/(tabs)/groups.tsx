@@ -10,9 +10,9 @@ import {
   TextInput,
   Modal,
 } from 'react-native';
-import { Users, Plus, X, DollarSign, TrendingUp } from 'lucide-react-native';
+import { Users, Plus, X, TrendingUp } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase, Group, GroupMember } from '@/lib/supabase';
+import { supabase, Group } from '@/lib/supabase';
 
 interface GroupWithMembers extends Group {
   member_count?: number;
@@ -27,9 +27,8 @@ export default function GroupsScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchGroups();
-    }
+    if (user) fetchGroups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchGroups = async () => {
@@ -184,7 +183,7 @@ export default function GroupsScreen() {
                   activeOpacity={0.8}
                   onPress={() =>
                     Alert.alert(
-                      'Group Details', 
+                      'Group Details',
                       `Group management features will be implemented in Phase 2. You'll be able to view bills, add members, and manage expenses for ${group.name}.`,
                       [{ text: 'Got it!' }]
                     )
