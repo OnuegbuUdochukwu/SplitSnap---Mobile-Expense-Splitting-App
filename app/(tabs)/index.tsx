@@ -14,24 +14,20 @@ import { AuthScreen } from '@/components/AuthScreen';
 import { supabase, Bill } from '@/lib/supabase';
 
 export default function HomeScreen() {
-  const { 
-    user, 
-    loading, 
+  const {
+    user,
+    loading,
     error,
-    signInWithGoogle, 
+    signInWithGoogle,
     signInWithApple,
     signInWithEmail,
-    signUpWithEmail 
+    signUpWithEmail,
+    signOut,
   } = useAuth();
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
 
-  useEffect(() => {
-    if (user) {
-      fetchRecentBills();
-    }
-  }, [user]);
-
-  const fetchRecentBills = async () => {
+  const fetchRecentBills = React.useCallback(async () => {
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from('bills')
@@ -45,7 +41,13 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Error fetching recent bills:', error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      void fetchRecentBills();
+    }
+  }, [user, fetchRecentBills]);
 
   const handleScanReceipt = () => {
     Alert.alert(
@@ -58,7 +60,7 @@ export default function HomeScreen() {
   const handleQuickSplit = () => {
     Alert.alert(
       'Quick Split',
-      'Manual bill creation will be implemented in Phase 2. You\'ll be able to create splits without scanning.',
+      "Manual bill creation will be implemented in Phase 2. You'll be able to create splits without scanning.",
       [{ text: 'Got it!' }]
     );
   };
@@ -73,7 +75,7 @@ export default function HomeScreen() {
 
   if (!user) {
     return (
-      <AuthScreen 
+      <AuthScreen
         onGoogleSignIn={signInWithGoogle}
         onAppleSignIn={signInWithApple}
         onEmailSignIn={signInWithEmail}
@@ -93,10 +95,26 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>Welcome back!</Text>
             <Text style={styles.userName}>{user.full_name}</Text>
           </View>
-          <View style={styles.userAvatar}>
-            <Text style={styles.userAvatarText}>
-              {user.full_name.charAt(0).toUpperCase()}
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              style={styles.signOutButton}
+              onPress={async () => {
+                try {
+                  await signOut();
+                } catch (err) {
+                  console.error('Sign out failed', err);
+                }
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.signOutText}>Sign Out</Text>
+            </TouchableOpacity>
+
+            <View style={styles.userAvatar}>
+              <Text style={styles.userAvatarText}>
+                {user.full_name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -148,9 +166,7 @@ export default function HomeScreen() {
                     <Text style={styles.billAmount}>
                       ₦{bill.total_amount.toLocaleString()}
                     </Text>
-                    <Text style={styles.billStatus}>
-                      Status: {bill.status}
-                    </Text>
+                    <Text style={styles.billStatus}>Status: {bill.status}</Text>
                     <Text style={styles.billDate}>
                       {new Date(bill.created_at!).toLocaleDateString()}
                     </Text>
@@ -371,5 +387,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#B45309',
     lineHeight: 18,
+  },
+  signOutButton: {
+    marginRight: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: 'transparent',
+  },
+  signOutText: {
+    color: '#3B82F6',
+    fontWeight: '600',
   },
 });
