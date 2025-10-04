@@ -1,0 +1,52 @@
+name: Bottom Navigation Integrity
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  check-bottom-nav:
+    name: Validate bottom navigation structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v5
+        with:
+          node-version: 18
+      - name: Install dependencies (no-op if none)
+        run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Run bottom nav integrity check
+        run: node ./scripts/check-bottom-nav.js
+  pr-comment:
+    name: Comment on PR if nav check fails
+    runs-on: ubuntu-latest
+    needs: check-bottom-nav
+    if: ${{ needs.check-bottom-nav.result == 'failure' && github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post friendly PR comment about navigation failure
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            :warning: Bottom Navigation Integrity check failed
+
+            Hi! The automated bottom-navigation integrity check found a problem with the app's tab layout in this branch. Per the project's UI rule, the bottom navigation must contain exactly these four tabs in this order:
+
+            1. Home (index)
+            2. Groups (groups)
+            3. Activity (activity)
+            4. Profile (profile)
+
+            The CI check enforces titles and icon components too. Please update `app/(tabs)/_layout.tsx` to match the required structure and re-run the checks. If you believe this is a false positive, reply here with details and I'll help investigate.
+
+            Helpful commands (run locally):
+            ```bash
+            npm run check:nav
+            ```
+
+            Thanks — keeping navigation stable helps preserve UX consistency across releases.
